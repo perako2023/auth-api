@@ -1,4 +1,7 @@
 import bcrypt from 'bcrypt'
+import { UserModel } from '../models/user.model'
+import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 /**
  * Hashes a password using bcrypt
@@ -25,4 +28,17 @@ export const comparePasswords = async (password: string, hashedPassword: string)
 	} catch (error) {
 		throw new Error(`Error comparing passwords: ${error}`)
 	}
+}
+
+/**
+ * Generates a JSON Web Token (JWT) for a user.
+ * @returns {string} The generated JWT
+ */
+export const signUserWithJwt = (
+	user: typeof UserModel.schema.obj & { _id: mongoose.Types.ObjectId }
+) => {
+	return jwt.sign(
+		{ username: user.username, email: user.email, id: user._id },
+		process.env.JWT_SECRET!
+	)
 }
