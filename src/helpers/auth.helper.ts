@@ -42,3 +42,11 @@ export const signUserWithJwt = (
 		process.env.JWT_SECRET!
 	)
 }
+
+export const isEmailValid = (email: string): boolean => {
+	// Regular expression pattern for email validation
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+	// Check if the email matches the pattern
+	return emailRegex.test(email)
+}

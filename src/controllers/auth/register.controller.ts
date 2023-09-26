@@ -1,6 +1,6 @@
 import express from 'express'
 import { UserModel } from '../../models/user.model'
-import { hashPassword, signUserWithJwt } from '../../helpers/auth.helper'
+import { hashPassword, isEmailValid, signUserWithJwt } from '../../helpers/auth.helper'
 
 export default async function registerController(req: express.Request, res: express.Response) {
 	try {
@@ -9,6 +9,8 @@ export default async function registerController(req: express.Request, res: expr
 		if (!username) return res.status(401).json({ error: 'Username is required' })
 		if (!email) return res.status(401).json({ error: 'Email is required' })
 		if (!password) return res.status(401).json({ error: 'Password is required' })
+
+		if (!isEmailValid(email)) return res.status(401).json({ error: 'Invalid email' })
 
 		const existingUser = await UserModel.findOne({ email })
 		if (existingUser) return res.status(401).json({ error: 'Email is already taken' })

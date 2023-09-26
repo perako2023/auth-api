@@ -1,7 +1,7 @@
 import express from 'express'
 import 'dotenv/config'
 import { UserModel } from '../../models/user.model'
-import { comparePasswords, signUserWithJwt } from '../../helpers/auth.helper'
+import { comparePasswords, isEmailValid, signUserWithJwt } from '../../helpers/auth.helper'
 
 export default async function loginController(req: express.Request, res: express.Response) {
 	try {
@@ -9,6 +9,8 @@ export default async function loginController(req: express.Request, res: express
 
 		if (!email) return res.status(401).json({ error: 'Email is required' })
 		if (!password) return res.status(401).json({ error: 'Password is required' })
+
+		if (!isEmailValid(email)) return res.status(401).json({ error: 'Invalid email' })
 
 		const user = await UserModel.findOne({ email }).select('+password')
 		if (!user) return res.status(401).json({ error: 'User not found' })
