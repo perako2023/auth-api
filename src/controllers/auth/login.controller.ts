@@ -2,9 +2,15 @@ import express from 'express'
 import 'dotenv/config'
 import { UserModel } from '../../models/user.model'
 import { comparePasswords, isEmailValid, signUserWithJwt } from '../../helpers/auth.helper'
+import isTokenValid from '../../helpers/isTokenValid'
 
 export default async function loginController(req: express.Request, res: express.Response) {
 	try {
+		const { token } = req.cookies
+		if (token && isTokenValid(token)) {
+			return res.status(409).json({ error: 'Already logged in' })
+		}
+
 		const { email, password } = req.body
 
 		if (!email) return res.status(401).json({ error: 'Email is required' })
@@ -18,8 +24,8 @@ export default async function loginController(req: express.Request, res: express
 		const isPasswordCorrect = await comparePasswords(password, user.password)
 		if (!isPasswordCorrect) return res.status(401).json({ error: 'Password is incorrect' })
 
-		const token = signUserWithJwt(user)
-		res.cookie('token', token)
+		const sessionToken = signUserWithJwt(user)
+		res.cookie('token', sessionToken)
 
 		//@ts-expect-error
 		user.password = undefined
