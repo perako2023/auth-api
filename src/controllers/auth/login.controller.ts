@@ -3,6 +3,7 @@ import 'dotenv/config'
 import { UserModel } from '../../models/user.model'
 import { comparePasswords, isEmailValid, signUserWithJwt } from '../../helpers/auth.helper'
 import isTokenValid from '../../helpers/isTokenValid'
+import { TOKEN_NAME } from '../../const'
 
 export default async function loginController(req: express.Request, res: express.Response) {
 	try {
@@ -25,7 +26,7 @@ export default async function loginController(req: express.Request, res: express
 		if (!isPasswordCorrect) return res.status(401).json({ error: 'Password is incorrect' })
 
 		const sessionToken = signUserWithJwt(user)
-		res.cookie('token', sessionToken)
+		res.cookie(TOKEN_NAME, sessionToken)
 
 		//@ts-expect-error
 		user.password = undefined

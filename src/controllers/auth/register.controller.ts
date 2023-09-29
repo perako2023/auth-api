@@ -1,6 +1,7 @@
 import express from 'express'
 import { UserModel } from '../../models/user.model'
 import { hashPassword, isEmailValid, signUserWithJwt } from '../../helpers/auth.helper'
+import { TOKEN_NAME } from '../../const'
 
 export default async function registerController(req: express.Request, res: express.Response) {
 	try {
@@ -24,7 +25,7 @@ export default async function registerController(req: express.Request, res: expr
 		})
 
 		const token = signUserWithJwt(newUser)
-		res.cookie('token', token)
+		res.cookie(TOKEN_NAME, token)
 
 		//@ts-expect-error
 		newUser.password = undefined

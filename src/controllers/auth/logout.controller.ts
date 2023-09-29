@@ -1,6 +1,7 @@
 import express from 'express'
 import 'dotenv/config'
 import isTokenValid from '../../helpers/isTokenValid'
+import { TOKEN_NAME } from '../../const'
 
 export default async function logout(req: express.Request, res: express.Response) {
 	try {
@@ -9,7 +10,7 @@ export default async function logout(req: express.Request, res: express.Response
 
 		if (isTokenValid(token) === false) return res.sendStatus(401)
 
-		res.clearCookie('token')
+		res.clearCookie(TOKEN_NAME)
 
 		return res.sendStatus(200)
 	} catch (error) {
